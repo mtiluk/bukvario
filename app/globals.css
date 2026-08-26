@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: #f8f1e5;
+  --color-surface: #f2e6d7;
+  --color-surface-hover: #ecdec9;
+  --color-line: #ded4ca;
+  --color-line-strong: #cabeb1;
+
+  --color-accent: #570c12;
+  --color-accent-hover: #74151d;
+  --color-accent-active: #430810;
+  --color-accent-tint: #ecdcd8;
+  --color-on-accent: #f8f1e5;
+
+  --color-ink: #5d222a;
+  --color-ink-soft: #5e514d;
+  --color-ink-muted: #8b7d78;
+
+  --color-success: #2f5d3a;
+  --color-warning: #8a5a12;
+  --color-danger: #8c1f1f;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-card: 0.75rem;
+  --radius-field: 0.5rem;
+
+  --shadow-card: 0 1px 2px rgb(93 34 42 / 0.04), 0 8px 24px rgb(93 34 42 / 0.06);
+  --shadow-pop: 0 2px 4px rgb(93 34 42 / 0.06), 0 16px 40px rgb(93 34 42 / 0.1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-line);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--color-line-strong) var(--color-background);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--color-accent);
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  ::placeholder {
+    color: var(--color-ink-muted);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-ink);
+    box-shadow: 0 0 0 1000px var(--color-surface) inset;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::after,
+    ::before {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
