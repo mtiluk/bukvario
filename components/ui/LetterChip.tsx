@@ -1,5 +1,4 @@
-export default function LetterChip({ letter, selected, onClick }: { letter: string; selected: boolean; onClick: () => void; }) {
-  return (
+export default function LetterChip({ glyph, selected, onClick }: { glyph: string; selected: boolean; onClick: () => void; }) {  return (
     <button
       className={`h-10 rounded-field border text-sm font-semibold transition-colors cursor-pointer ${
         selected
@@ -8,9 +7,9 @@ export default function LetterChip({ letter, selected, onClick }: { letter: stri
       }`}
       onClick={onClick}
     >
-      {letter}
+      {glyph}
       <span className="ml-1 text-xs font-normal text-ink-muted">
-        {letter.toLowerCase()}
+        {glyph.toLowerCase()}
       </span>
     </button>
   );

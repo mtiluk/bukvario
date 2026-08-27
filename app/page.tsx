@@ -1,79 +1,86 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import TabBar from "@/components/TabBar";
 import ScriptHeader from "@/components/ScriptHeader";
 import LetterGroup from "@/components/LetterGroup";
 import SelectionFooter from "@/components/SelectionFooter";
-import {
-  LATIN_GROUPS,
-  CYRILLIC_GROUPS,
-  type Tabs,
-  type LetterGroupData,
-} from "@/lib/letters";
-
-type ScriptTab = { mark: string; title: string; groups: LetterGroupData[] };
-
-const SCRIPT_TABS: Partial<Record<Tabs, ScriptTab>> = {
-  latin: { mark: "Š", title: "Latin", groups: LATIN_GROUPS },
-  cyrillic: { mark: "Ш", title: "Cyrillic", groups: CYRILLIC_GROUPS },
-};
+import { ALPHABET, LATIN_GROUPS, CYRILLIC_GROUPS } from "@/lib/letters";
+import type { Tabs } from "@/lib/letters";
 
 export default function Home() {
-  const [tabName, setTabName] = useState<Tabs>("latin");
+  const [tabName, setTabName] = useState<Tabs>("Latin");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const totalCount = ALPHABET.length
+  const router = useRouter();
 
-  const script = SCRIPT_TABS[tabName];
-  const totalCount = script?.groups.reduce((n, g) => n + g.letters.length, 0) ?? 0;
-
-  const [selected, setSelected] = useState(new Set<string>());
-
-  const toggleLetter = (letter: string) => {
+  function toggleLetter(id: string) {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(letter)) {
-        next.delete(letter);
+      if (next.has(id)) {
+        next.delete(id);
       } else {
-        next.add(letter);
+        next.add(id);
       }
       return next;
     });
-  };
+  }
 
-  // on 'Start Studying' button click -> take set of selected letters and redirect to study page
+  function setMany(ids: string[], on: boolean) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      ids.forEach((id) => (on ? next.add(id) : next.delete(id)));
+      return next;
+    });
+  }
+
+  function reset() {
+    setSelected(new Set());
+  }
+
   const handleStartStudying = () => {
-    console.log(selected)
+    if (selected.size === 0) return;
+
+    const params = new URLSearchParams({
+      script: tabName,
+      letters: Array.from(selected).join(","),
+    });
+
+    router.push(`/study?${params}`);
   };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
       <div className="w-full max-w-lg relative">
         <div className="bg-surface border rounded-lg flex flex-col">
-          <TabBar active={tabName} onChange={setTabName} />
+          <TabBar active={tabName} action={setTabName} />
 
           <div className="flex-1">
-            {script ? (
+            {tabName !== "Study" ? (
               <>
-                <ScriptHeader
-                  mark={script.mark}
-                  title={script.title}
-                  subtitle="Overview"
-                />
+                <ScriptHeader mark={tabName === "Latin" ? "Š" : "Ш"} title={tabName} subtitle="Overview" />
                 <div className="px-4 py-1">
-                  {script.groups.map((group) => (
-                    <LetterGroup key={group.label} group={group} selected={selected} onToggle={toggleLetter} />
+                  {(tabName === "Latin" ? LATIN_GROUPS : CYRILLIC_GROUPS).map((g) => (
+                    <LetterGroup
+                      key={g.key}
+                      label={g.label}
+                      letters={ALPHABET.filter((l) =>
+                        tabName === "Latin" ? l.latinGroup === g.key : l.cyrillicGroup === g.key
+                      )}
+                      script={tabName}
+                      selected={selected}
+                      onSetMany={setMany}
+                    />
                   ))}
                 </div>
               </>
             ) : (
-              <div className="p-4 text-sm text-ink-muted">
-                {/* Study tab content */}
-              </div>
+              <div className="p-4 text-sm text-ink-muted"></div>
             )}
-          </div>
+           </div>
 
-          {script && (
-            <SelectionFooter selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
-          )}
+           <SelectionFooter selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
         </div>
 
         <div className="bg-accent p-4 rounded-lg mt-4">
