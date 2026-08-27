@@ -80,7 +80,7 @@ export default function Home() {
             )}
            </div>
 
-           <SelectionFooter selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
+           <SelectionFooter reset={reset} selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
         </div>
 
         <div className="bg-accent p-4 rounded-lg mt-4">
