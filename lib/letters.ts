@@ -44,5 +44,3 @@ export const CYRILLIC_GROUPS: LetterGroupData[] = [
     letters: ["Ђ", "Ћ", "Џ", "Љ", "Њ"],
   },
 ];
-
-export const PRESELECTED = new Set(["Č", "Ć", "Š", "Ž", "Đ"]);

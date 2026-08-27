@@ -8,7 +8,6 @@ import SelectionFooter from "@/components/SelectionFooter";
 import {
   LATIN_GROUPS,
   CYRILLIC_GROUPS,
-  PRESELECTED,
   type Tabs,
   type LetterGroupData,
 } from "@/lib/letters";
@@ -26,6 +25,25 @@ export default function Home() {
   const script = SCRIPT_TABS[tabName];
   const totalCount = script?.groups.reduce((n, g) => n + g.letters.length, 0) ?? 0;
 
+  const [selected, setSelected] = useState(new Set<string>());
+
+  const toggleLetter = (letter: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(letter)) {
+        next.delete(letter);
+      } else {
+        next.add(letter);
+      }
+      return next;
+    });
+  };
+
+  // on 'Start Studying' button click -> take set of selected letters and redirect to study page
+  const handleStartStudying = () => {
+    console.log(selected)
+  };
+
   return (
     <div className="w-screen h-screen flex items-center justify-center">
       <div className="w-full max-w-lg relative">
@@ -42,11 +60,7 @@ export default function Home() {
                 />
                 <div className="px-4 py-1">
                   {script.groups.map((group) => (
-                    <LetterGroup
-                      key={group.label}
-                      group={group}
-                      selected={PRESELECTED}
-                    />
+                    <LetterGroup key={group.label} group={group} selected={selected} onToggle={toggleLetter} />
                   ))}
                 </div>
               </>
@@ -58,10 +72,7 @@ export default function Home() {
           </div>
 
           {script && (
-            <SelectionFooter
-              selectedCount={PRESELECTED.size}
-              totalCount={totalCount}
-            />
+            <SelectionFooter selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
           )}
         </div>
 
