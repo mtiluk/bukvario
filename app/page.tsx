@@ -1,38 +1,68 @@
 "use client";
 
 import { useState } from "react";
-import ClassButton from "@/components/ui/ClassButton";
+import TabBar from "@/components/TabBar";
+import ScriptHeader from "@/components/ScriptHeader";
+import LetterGroup from "@/components/LetterGroup";
+import SelectionFooter from "@/components/SelectionFooter";
+import {
+  LATIN_GROUPS,
+  CYRILLIC_GROUPS,
+  PRESELECTED,
+  type Tabs,
+  type LetterGroupData,
+} from "@/lib/letters";
 
-const CLASSES = ["Latin", "Cyrilic", "Study"];
+type ScriptTab = { mark: string; title: string; groups: LetterGroupData[] };
+
+const SCRIPT_TABS: Partial<Record<Tabs, ScriptTab>> = {
+  latin: { mark: "Š", title: "Latin", groups: LATIN_GROUPS },
+  cyrillic: { mark: "Ш", title: "Cyrillic", groups: CYRILLIC_GROUPS },
+};
 
 export default function Home() {
-  const [active, setActive] = useState(0);
+  const [tabName, setTabName] = useState<Tabs>("latin");
+
+  const script = SCRIPT_TABS[tabName];
+  const totalCount = script?.groups.reduce((n, g) => n + g.letters.length, 0) ?? 0;
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
       <div className="w-full max-w-lg relative">
-        <div className="bg-surface border rounded-lg overflow-hidden">
-          {/* Classes */}
-          <div className="relative grid grid-cols-3 border-b text-sm font-semibold">
-            {CLASSES.map((label, i) => (
-              <ClassButton key={label} active={active === i} onClick={() => setActive(i)} isFirst={i === 0} isLast={i === CLASSES.length - 1}>
-                {label}
-              </ClassButton>
-            ))}
+        <div className="bg-surface border rounded-lg flex flex-col">
+          <TabBar active={tabName} onChange={setTabName} />
 
-            {/* Dividers — painted above the pill */}
-            <div
-              aria-hidden
-              className="absolute inset-0 grid grid-cols-3 divide-x pointer-events-none"
-            >
-              <div />
-              <div />
-              <div />
-            </div>
+          <div className="flex-1">
+            {script ? (
+              <>
+                <ScriptHeader
+                  mark={script.mark}
+                  title={script.title}
+                  subtitle="Overview"
+                />
+                <div className="px-4 py-1">
+                  {script.groups.map((group) => (
+                    <LetterGroup
+                      key={group.label}
+                      group={group}
+                      selected={PRESELECTED}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="p-4 text-sm text-ink-muted">
+                {/* Study tab content */}
+              </div>
+            )}
           </div>
 
-          {/* Body */}
-          <div className="py-4" />
+          {script && (
+            <SelectionFooter
+              selectedCount={PRESELECTED.size}
+              totalCount={totalCount}
+            />
+          )}
         </div>
 
         <div className="bg-accent p-4 rounded-lg mt-4">
