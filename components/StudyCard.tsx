@@ -1,12 +1,49 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState} from "react";
 import { useSearchParams } from "next/navigation";
 import AudioButton from "@/components/ui/AudioButton";
+import { ALPHABET } from "@/lib/letters";
+import { definePatch } from "@web-kits/audio";
+import { _patch } from "@/.web-kits/retro";
+
+function shuffle<T>(items: T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 export default function StudyCard() {
   const searchParams = useSearchParams();
   const selectedLetters = searchParams.get("letters");
+  const [index, setIndex] = useState(0);
+  const [status, setStatus] = useState<"TYPING" | "CORRECT" | "WRONG">("TYPING");
+
+  const deck = useMemo(() => {
+    const ids = new Set(selectedLetters?.split(",") ?? []);
+    return shuffle(ALPHABET.filter((l) => ids.has(l.latin)));
+  }, [selectedLetters]);
+
+  const patch = definePatch(_patch);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const input = new FormData(e.target as HTMLFormElement);
+    const value = input.get("answer") as string;
+
+    if (deck[index]?.answers.includes(value)) {
+      setStatus("CORRECT");
+      setIndex(index + 1);
+      patch.play("success");
+    } else {
+      setStatus("WRONG");
+      patch.play("error");
+    }
+  }
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
@@ -14,14 +51,16 @@ export default function StudyCard() {
         <div className="bg-surface border rounded-lg flex flex-col overflow-hidden">
           {/* Progress */}
           <div className="flex items-center justify-between border-b px-4 py-2 text-xs text-ink-muted">
-            <span>Card 1 of 20</span>
+            <span>Card {index + 1} of {deck.length}</span>
             <span>Latin → Cyrillic</span>
           </div>
 
           {/* Prompt */}
           <div className="flex flex-col items-center gap-4 px-4 py-12">
             <div className="flex items-center gap-3">
-              <span className="text-7xl font-bold leading-none text-ink">{selectedLetters}</span>
+              <span className="text-7xl font-bold leading-none text-ink">
+                {deck[index]?.latin}
+              </span>
               <AudioButton />
             </div>
 
@@ -29,14 +68,18 @@ export default function StudyCard() {
               Type the pronunciation
             </p>
 
-            <input
-              autoFocus
-              autoComplete="off"
-              autoCorrect="off"
-              spellCheck={false}
-              placeholder="…"
-              className="w-40 rounded-field border border-line bg-background px-3 py-2 text-center text-lg font-semibold text-ink outline-none focus:border-accent transition-colors"
-            />
+            <form id="study-form" onSubmit={handleSubmit}>
+              <input
+                name="answer"
+                autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                placeholder="…"
+                onInput={(e) => setStatus("TYPING")}
+                className={`w-40 rounded-field border border-line bg-background px-3 py-2 text-center text-lg font-semibold text-ink outline-none focus:border-accent transition-colors ${status === "CORRECT" || status === "WRONG" ? "border-red-600 focus:border-red-600" : ""}`}
+              />
+            </form>
           </div>
 
           {/* Footer */}
@@ -47,7 +90,7 @@ export default function StudyCard() {
             >
               Quit
             </Link>
-            <button className="rounded-field bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover active:bg-accent-active transition-colors cursor-pointer">
+            <button form="study-form" className="rounded-field bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover active:bg-accent-active transition-colors cursor-pointer">
               Check
             </button>
           </div>

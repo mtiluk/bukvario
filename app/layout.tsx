@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Geist_Mono } from "next/font/google";
+import { SoundProvider } from "@web-kits/audio/react";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -18,12 +19,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return (
-    <html
-      lang="en"
-      className={`${manrope.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
+return (
+    <SoundProvider enabled={true} volume={1}>
+      <html lang="en" className={`${manrope.variable} ${geistMono.variable} h-full antialiased`} >
+        <body className="min-h-full flex flex-col">{children}</body>
+      </html>
+    </SoundProvider>
   );
 }
