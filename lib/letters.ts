@@ -56,4 +56,4 @@ export const CYRILLIC_GROUPS = [
 ] as const;
 
 export type Tabs = (typeof TABS)[number];
-export const TABS = ["Latin", "Cyrillic", "Study"] as const;
+export const TABS = ["Latin", "Cyrillic"] as const;

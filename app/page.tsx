@@ -6,8 +6,10 @@ import TabBar from "@/components/TabBar";
 import ScriptHeader from "@/components/ScriptHeader";
 import LetterGroup from "@/components/LetterGroup";
 import SelectionFooter from "@/components/SelectionFooter";
+import OpenSourceCard from "@/components/OpenSourceCard";
 import { ALPHABET, LATIN_GROUPS, CYRILLIC_GROUPS } from "@/lib/letters";
 import type { Tabs } from "@/lib/letters";
+
 
 export default function Home() {
   const [tabName, setTabName] = useState<Tabs>("Latin");
@@ -83,9 +85,7 @@ export default function Home() {
            <SelectionFooter reset={reset} selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
         </div>
 
-        <div className="bg-accent p-4 rounded-lg mt-4">
-          {/* This is open source - repo invitation thing */}
-        </div>
+        <OpenSourceCard />
       </div>
     </div>
   );

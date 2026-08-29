@@ -13,6 +13,10 @@
   --color-accent-tint: #ecdcd8;
   --color-on-accent: #f8f1e5;
 
+  --color-github: #24292f;
+  --color-github-hover: #32383f;
+  --color-github-active: #1b1f24;
+
   --color-ink: #5d222a;
   --color-ink-soft: #5e514d;
   --color-ink-muted: #8b7d78;
