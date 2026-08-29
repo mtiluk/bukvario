@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const REPO_URL = "https://github.com/mtiluk/bukvario;
+const REPO_URL = "https://github.com/mtiluk/bukvario";
 
 export default function OpenSourceCard() {
   return (
