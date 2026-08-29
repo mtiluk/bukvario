@@ -7,7 +7,6 @@ export default function OpenSourceCard() {
     <div className="mt-4 rounded-card bg-github p-4 shadow-card">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          {/* GitHub mark */}
           <svg
             viewBox="0 0 16 16"
             aria-hidden="true"

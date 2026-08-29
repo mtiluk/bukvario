@@ -7,6 +7,7 @@ import AudioButton from "@/components/ui/AudioButton";
 import { ALPHABET } from "@/lib/letters";
 import { definePatch } from "@web-kits/audio";
 import { _patch } from "@/.web-kits/retro";
+import OpenSourceCard from "@/components/OpenSourceCard";
 
 function shuffle<T>(items: T[]): T[] {
   const out = [...items];
@@ -21,12 +22,13 @@ export default function StudyCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedLetters = searchParams.get("letters");
+  const script = searchParams.get("script") === "Cyrillic" ? "Cyrillic" : "Latin";
   const [index, setIndex] = useState(0);
   const [status, setStatus] = useState<"TYPING" | "CORRECT" | "WRONG">("TYPING");
 
   const deck = useMemo(() => {
     const ids = new Set(selectedLetters?.split(",") ?? []);
-    return shuffle(ALPHABET.filter((l) => ids.has(l.latin)));
+    return shuffle(ALPHABET.filter((l) => ids.has(l.latin) || ids.has(l.cyrillic)));
   }, [selectedLetters]);
 
   const patch = definePatch(_patch);
@@ -49,7 +51,7 @@ export default function StudyCard() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const input = new FormData(e.target as HTMLFormElement);
-    const value = input.get("answer") as string;
+    const value = ((input.get("answer") as string) ?? "").trim().toLowerCase();
     if (deck[index]?.answers.includes(value)) {
       setStatus("TYPING");
       setIndex(index + 1);
@@ -82,13 +84,13 @@ export default function StudyCard() {
           {/* Progress */}
           <div className="flex items-center justify-between border-b px-4 py-2 text-xs text-ink-muted">
             <span>Card {index + 1} of {deck.length}</span>
-            <span>Latin → Cyrillic</span>
+            <span>{script === "Cyrillic" ? "Cyrillic → Pronunciation" : "Latin → Pronunciation"}</span>
           </div>
           {/* Prompt */}
           <div className="flex flex-col items-center gap-4 px-4 py-12">
             <div className="flex items-center gap-3">
               <span className="text-7xl font-bold leading-none text-ink">
-                {deck[index]?.latin}
+                {script === "Cyrillic" ? deck[index]?.cyrillic : deck[index]?.latin}
               </span>
               <AudioButton />
             </div>
@@ -121,9 +123,7 @@ export default function StudyCard() {
             </button>
           </div>
         </div>
-        <div className="bg-accent p-4 rounded-lg mt-4">
-          {/* This is open source - repo invitation thing */}
-        </div>
+        <OpenSourceCard />
       </div>
     </div>
   );

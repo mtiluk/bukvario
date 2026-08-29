@@ -59,30 +59,24 @@ export default function Home() {
           <TabBar active={tabName} action={setTabName} />
 
           <div className="flex-1">
-            {tabName !== "Study" ? (
-              <>
-                <ScriptHeader mark={tabName === "Latin" ? "Š" : "Ш"} title={tabName} subtitle="Overview" />
-                <div className="px-4 py-1">
-                  {(tabName === "Latin" ? LATIN_GROUPS : CYRILLIC_GROUPS).map((g) => (
-                    <LetterGroup
-                      key={g.key}
-                      label={g.label}
-                      letters={ALPHABET.filter((l) =>
-                        tabName === "Latin" ? l.latinGroup === g.key : l.cyrillicGroup === g.key
-                      )}
-                      script={tabName}
-                      selected={selected}
-                      onSetMany={setMany}
-                    />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="p-4 text-sm text-ink-muted"></div>
-            )}
-           </div>
+            <ScriptHeader mark={tabName === "Latin" ? "Š" : "Ш"} title={tabName} subtitle="Overview" />
+            <div className="px-4 py-1">
+              {(tabName === "Latin" ? LATIN_GROUPS : CYRILLIC_GROUPS).map((g) => (
+                <LetterGroup
+                  key={g.key}
+                  label={g.label}
+                  letters={ALPHABET.filter((l) =>
+                    tabName === "Latin" ? l.latinGroup === g.key : l.cyrillicGroup === g.key
+                  )}
+                  script={tabName}
+                  selected={selected}
+                  onSetMany={setMany}
+                />
+              ))}
+            </div>
+          </div>
 
-           <SelectionFooter reset={reset} selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
+          <SelectionFooter reset={reset} selectedCount={selected.size} totalCount={totalCount} onStartStudying={handleStartStudying} />
         </div>
 
         <OpenSourceCard />
@@ -90,4 +84,3 @@ export default function Home() {
     </div>
   );
 }
-22
