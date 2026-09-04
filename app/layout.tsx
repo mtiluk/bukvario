@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
 return (
     <SoundProvider enabled={true} volume={1}>
-      <html lang="en" className={`${manrope.variable} ${geistMono.variable} h-full antialiased`} >
+      <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${geistMono.variable} h-full antialiased`} >
         <body className="min-h-full flex flex-col">{children}</body>
       </html>
     </SoundProvider>

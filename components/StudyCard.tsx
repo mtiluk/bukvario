@@ -32,10 +32,14 @@ export default function StudyCard() {
   }, [selectedLetters]);
 
   const patch = definePatch(_patch);
-  const done = deck.length <= 0 || index >= deck.length;
+  const finished = deck.length > 0 && index >= deck.length;
 
   useEffect(() => {
-    if (!done) return;
+    if (deck.length === 0) {
+      router.replace("/");
+      return;
+    }
+    if (!finished) return;
 
     patch.play("success");
     confetti({
@@ -46,7 +50,7 @@ export default function StudyCard() {
 
     const timeout = setTimeout(() => router.push("/"), 2500);
     return () => clearTimeout(timeout);
-  }, [done, router]);
+  }, [finished, router]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,7 +67,7 @@ export default function StudyCard() {
     }
   }
 
-  if (done) {
+  if (finished) {
     return (
       <div className="w-screen h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-center">
